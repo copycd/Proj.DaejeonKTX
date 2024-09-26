@@ -10,3 +10,6 @@ var xlsFilePath = Path.Combine(dataRoot, "이동량", "SWL_MANH_PS.xlsx");
 string outputDir = "E:\\맨홀";
 InstanceExlsToJson exlsToJson = new InstanceExlsToJson();
 exlsToJson.convert(modelRoot, xlsFilePath, outputDir);
+
+
+Console.WriteLine("Finish!");
