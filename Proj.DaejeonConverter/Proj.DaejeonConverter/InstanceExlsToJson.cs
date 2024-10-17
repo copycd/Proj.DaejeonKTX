@@ -12,6 +12,7 @@ using ExcelDataReader;
 using Polly;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
 using static CCd.Maths.CCdAngle;
@@ -24,7 +25,10 @@ namespace Proj.DaejeonConverter
         public bool convert( string srcModelRoot, string xlsFilePath, string outputDir)
         {
             if (File.Exists(xlsFilePath) == false)
+            {
+                Console.WriteLine($"{xlsFilePath}  이 없음.");
                 return false;
+            }
 
             var dataTable = ExlsUtil.ReadExcelFile(xlsFilePath);
             if (dataTable != null)
