@@ -43,7 +43,9 @@ namespace Proj.DaejeonConverter
                     // ID를 모델파일 이름으로 할건데 파일이름으로 할수 없는것들이 있으면 교체.
                     batchItem.Id = batchItem.Id.Replace(":", "_");
 
-                    batchItem.FName = row[All4Def.TransformTableField.FileName].ToString();
+                    var originalModelFileName = row[All4Def.TransformTableField.FileName].ToString();
+                    // 새로이 저장될 모델 파일명.
+                    batchItem.FName = $"{batchItem.Id}.obj";
 
                     double posX = (double)row[All4Def.TransformTableField.X];
                     double posY = (double)row[All4Def.TransformTableField.Y];
@@ -52,8 +54,8 @@ namespace Proj.DaejeonConverter
 
                     double rotationAngle = (double)row[All4Def.TransformTableField.AngleZ];
 
-                    var srcModelFilePath = Path.Combine(srcModelRoot, batchItem.FName);
-                    var outModelFilePath = Path.Combine(outputDir, $"{batchItem.Id}.obj");
+                    var srcModelFilePath = Path.Combine(srcModelRoot, originalModelFileName );
+                    var outModelFilePath = Path.Combine(outputDir, batchItem.FName );
 
                     using (AssimpContext importer = new AssimpContext())
                     {

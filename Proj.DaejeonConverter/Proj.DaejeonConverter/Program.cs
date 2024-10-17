@@ -30,4 +30,4 @@ foreach (var dataNameTable in dataNameTableList)
     exlsToJson.convert(modelRoot, xlsFilePath, outputDir);
 }
 
-Console.WriteLine("Finish!");
+Console.WriteLine("************   Finish!   ****************");
