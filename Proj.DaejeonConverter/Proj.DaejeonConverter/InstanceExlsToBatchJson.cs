@@ -1,27 +1,40 @@
 ﻿using Assimp;
 using Assimp.CCd;
 using CCd.AssimpNet.CCd;
-using CCd.Core.Three;
 using CCd.GIS.ModelBatch;
 using CCd.IOs;
 using CCd.Maths;
-using CCd.Nets.Rpc;
-using CCd.WS.Core.D3Tiles.Batch;
 using CCd.WS.Core.Mesh;
-using ExcelDataReader;
-using Polly;
-using System;
+using CCd.WS.Core.Utils;
 using System.Data;
-using System.Diagnostics;
-using System.IO.Compression;
-using System.Text;
-using static CCd.Maths.CCdAngle;
+
 
 
 namespace Proj.DaejeonConverter
 {
-    internal class InstanceExlsToJson
+    internal class InstanceExlsToBatchJson
     {
+        CCdElevateExtractor _elevateExtractor;
+
+        public void setDemFiles(string[] demFilePathArray )
+        {
+            if (demFilePathArray == null || demFilePathArray.Length < 1)
+                return;
+
+            foreach (string filePath in demFilePathArray)
+            {
+                if (File.Exists(filePath) == false)
+                    return;
+            }
+
+            if (_elevateExtractor == null)
+            {
+                _elevateExtractor = new CCdElevateExtractor();
+                _elevateExtractor.loadRasterDem(demFilePathArray);
+            }
+        }
+
+
         public bool convert( string srcModelRoot, string xlsFilePath, string outputDir)
         {
             if (File.Exists(xlsFilePath) == false)
@@ -49,10 +62,18 @@ namespace Proj.DaejeonConverter
 
                     double posX = (double)row[All4Def.TransformTableField.X];
                     double posY = (double)row[All4Def.TransformTableField.Y];
-                    double posZ = (double)row[All4Def.TransformTableField.Z];
+                    double posZ = 0;
+                    // 241024.중간에 포맷에서 사라짐.
+                    //double posZ = (double)row[All4Def.TransformTableField.Z];
+                    if (_elevateExtractor != null && _elevateExtractor.getElevation(posX, posY, out float terrainHeight))
+                        posZ = terrainHeight;
                     batchItem.Alt = posZ;
 
                     double rotationAngle = (double)row[All4Def.TransformTableField.AngleZ];
+
+                    // 얼만큼 내려갈지.
+                    double downDepth = (double)row[All4Def.TransformTableField.Depth];
+                    batchItem.Alt -= downDepth;
 
                     var srcModelFilePath = Path.Combine(srcModelRoot, originalModelFileName );
                     var outModelFilePath = Path.Combine(outputDir, batchItem.FName );
