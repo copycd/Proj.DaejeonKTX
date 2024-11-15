@@ -64,7 +64,9 @@ namespace Proj.DaejeonConverter
                     double posY = (double)row[All4Def.TransformTableField.Y];
                     double posZ = 0;
                     // 241024.중간에 포맷에서 사라짐.
-                    //double posZ = (double)row[All4Def.TransformTableField.Z];
+                    // 241115.다시생김.
+                    posZ = (double)row[All4Def.TransformTableField.Z];
+
                     if (_elevateExtractor != null && _elevateExtractor.getElevation(posX, posY, out float terrainHeight))
                         posZ = terrainHeight;
                     batchItem.Alt = posZ;
@@ -72,7 +74,9 @@ namespace Proj.DaejeonConverter
                     double rotationAngle = (double)row[All4Def.TransformTableField.AngleZ];
 
                     // 얼만큼 내려갈지.
-                    double downDepth = (double)row[All4Def.TransformTableField.Depth];
+                    double downDepth = 0;
+                    // 241115.사라짐.
+                    //downDepth = (double)row[All4Def.TransformTableField.Depth];
                     batchItem.Alt -= downDepth;
 
                     var srcModelFilePath = Path.Combine(srcModelRoot, originalModelFileName );
